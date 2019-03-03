@@ -1,8 +1,8 @@
 import logging
 from .gameboard import GameBoard
 import random, string
-LOG_FORMAT = '%(levelname)-10s %(asctime)s %(filename)-20s %(funcName)-25s %(lineno)-5d: %(message)s'
-logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
+import logging
+logging = logging.getLogger('covert_tuba')
 
 ROOMS = {} # dict to track active rooms
 PLAYERS = {}
@@ -36,13 +36,6 @@ def player_to_room(player_name):
     else:
         logging.info("Player: {} does not exist. 400".format(player_name))
         return ret_helper(code=400)
-    
-def delete_room(room_name):
-    if room_name in ROOMS:
-        del ROOMS[room_name]
-        return ret_helper()
-    else:
-        return ret_helper(code=400)
 
 def create_room(board_size, name=None):
     """Create a game lobby
@@ -65,7 +58,7 @@ def create_room(board_size, name=None):
         return return_helper(code=400)
     else:
         logging.info("Creating Room: {}".format(name))
-        board = GameBoard(board_size)
+        board = GameBoard(name, board_size)
         ROOMS[name] = board
         return ret_helper(name=name)
 
@@ -78,8 +71,41 @@ def register_player(room_name, player_name, spectator=False):
     role = room.register_player(player_name, spectator)
     logging.info("Registered Player: {}, to Room: {}, Role: {}".format(player_name, room_name, role))
     PLAYERS[player_name] = room_name
-    return ret_helper(role)
+    return ret_helper(role=role)
 
+def unregister_player(player_name, room=None):
+    if player_name in PLAYERS:
+        room_name = PLAYERS[player_name]
+        logging.info("Unregistering {}".format(player_name))
+        del PLAYERS[player_name]
+        
+        if room is None:
+            response = get_room(room_name)
+            if response['code'] == 200:
+                room = response['value']
+        
+        if room is not None:
+            logging.info("Unregistering {} from {}".format(player_name, room.get_name()))
+            total_players = room.unregister_player(player_name)
+            if total_players == 0:
+                delete_room(room.get_name(), room)
+        
+def delete_room(room_name, room=None):
+    if room is None:
+        response = get_room(room_name)
+        if response['code'] == 200:
+            room = response['value']
+        else:
+            logging.info("Could not find Room {} to delete".format(room_name))
+            return ret_helper(code=400)
+        
+    if room is not None:
+        for player in room.get_players():
+            unregister_player(player, room)
+        logging.info("Deleting Room {}".format(room_name))
+        del ROOMS[room_name]
+        return ret_helper()
+            
 def play_move(player_name, location):
     response = player_to_room(player_name)
     if response['code'] == 400:

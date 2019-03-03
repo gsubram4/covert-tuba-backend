@@ -4,9 +4,7 @@ from . import controller
 from . import socketio
 from jsonschema import validate
 import logging
-LOG_FORMAT = '%(levelname)-10s %(asctime)s %(filename)-20s %(funcName)-25s %(lineno)-5d: %(message)s'
-logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-
+logging = logging.getLogger('covert_tuba')
 
 """
 Tic-Tac-Toe
@@ -47,6 +45,16 @@ def validate_json_keys(json, keys, **kwargs):
         if key not in json:
             json[key] = value
     return True
+
+@socketio.on('connect')
+def test_connect():
+    logging.debug("User {} Connected".format(request.sid))
+
+@socketio.on('disconnect')
+def test_disconnect():
+    logging.debug("User {} Disconnected".format(request.sid))
+    controller.unregister_player(request.sid)
+    
             
 @socketio.on('join_board')
 def join_board(json):
@@ -72,7 +80,9 @@ def create_board(json):
     response = controller.create_room(json['board_size'], json['name'])
     if response['code'] == 200:
         join_room(response['name'])
-        controller.register_player(response['name'], request.sid)
+        response2 = controller.register_player(response['name'], request.sid)
+        if 'role' in response2:
+            response['role'] = response2['role']
         emit_board(response['name'])
         return response
     else:

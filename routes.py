@@ -3,10 +3,10 @@ from . import controller
 
 bp = Blueprint('routes', __name__,template_folder='templates')
 
-#@bp.route('/', methods=["GET"])
-#def index():
-#    """Serve the index HTML"""
-#    return send_from_directory('static', 'index.html')#render_template('index.html')
+@bp.route('/', methods=["GET"])
+def index():
+    """Serve the index HTML"""
+    return send_from_directory('static', 'index.html')#render_template('index.html')
 
 @bp.route('/rooms' , methods=["GET"])
 def rooms_rest():

@@ -8,7 +8,8 @@ class GameBoard:
     player_spectator = 0
     repr_dict = {0: "", player_one: "x", player_two: "o" }
     
-    def __init__(self, board_size):
+    def __init__(self, name, board_size):
+        self.name = name
         self.board_size = board_size
         self.active_player = GameBoard.player_one
         self.winner = 0
@@ -17,6 +18,12 @@ class GameBoard:
         self.player_one = None
         self.player_two = None
         self.players = {}
+        
+    def get_name(self):
+        return self.name
+        
+    def get_players(self):
+        return list(self.players.keys())
         
     def register_player(self, player_name, spectator=False):
         if player_name in self.players:
@@ -37,6 +44,15 @@ class GameBoard:
                 
         self.players[player_name] = role
         return role
+    
+    def unregister_player(self, player_name):
+        if player_name in self.players:
+            if player_name == self.player_one:
+                self.player_one = None
+            if player_name == self.player_two:
+                self.player_two = None
+            del self.players[player_name]
+        return len(self.players)
         
     def flip_active_player(self):
         if self.active_player == GameBoard.player_one:
