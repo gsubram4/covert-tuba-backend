@@ -3,11 +3,11 @@ var NetworkInterface = function() {
   //TODO: Move to config file
   var network_config = {
     "PROD": {
-      "domain": "http://107.22.89.117",
+      "domain": "http://3.88.102.135",
       "port": "8000"
     },
     "DEV": {
-      "domain": "http://107.22.89.117",
+      "domain": "http://3.88.102.135",
       "port": "5000"
     }
   };

@@ -77,8 +77,7 @@ var Board = function(_gridsize) {
 
     // TODO: Add render delay
     setTimeout(function() {
-      cell.classList.add("animated");
-      cell.classList.add("jackInTheBox");
+      if ( !rendered ) cell.classList.add("animated", "jackInTheBox");
       cell.style.visibility = "visible";
     }, renderDelay*Math.random());
 
