@@ -43,6 +43,8 @@ var ShareLink = function(url) {
   var copy = new Button("Copy invite", function() {
     input.select();
     document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+    Notification.show("Copied! Send that link to a friend to get started!");
   });
   
   container.appendChild(input);
@@ -60,12 +62,15 @@ var ShareLink = function(url) {
 
 var Panel = function() {
   var panel = document.createElement("div");
-  panel.style.backgroundColor = "white";
-  panel.style.boxShadow = "0 1px 4px rgba(0,0,0,.15)";
+  applyStyle(panel, CardStyle);
   return panel;
   //panel.styl
 }
 
+var CardStyle = {
+  backgroundColor: "white",
+  boxShadow: "0 1px 4px rgba(0,0,0,.15)"
+};
 
 var TextStyle = {
   fontFamily: "Consolas,monaco,\"Ubuntu Mono\",courier,monospace",
@@ -92,3 +97,67 @@ var CenterContents = {
 function applyStyle(target, style) {
   Object.assign(target.style, style);
 }
+
+var Notification = function() {
+  
+  var hasInitialized = false;
+  var toast_queue = [];
+  
+  var container = document.createElement("div");
+  container.classList.add("animated", "fadeInOut");
+  
+  applyStyle(container, CardStyle);
+  applyStyle(container, TextStyle);
+  applyStyle(container, {
+    position: "absolute",
+    margin: "10px",
+    padding: "10px",
+    top: 0,
+    right: 0, 
+    backgroundColor: "#55a147",
+    color: "white"
+  });
+  
+  function addToast(msg, options) {
+    var thisToast = {
+      msg: msg,
+      options: options
+    };
+    toast_queue.push(thisToast);
+    
+    if (toast_queue.length > 1) return;
+    
+    showToast(msg, options);
+  }
+  
+  function showToast(msg, options) {
+    
+    if (!hasInitialized) document.body.appendChild(container);
+    
+    var options = options || {};
+    container.innerText = msg;
+    container.classList.remove("fadeOutUp");
+    container.classList.add("fadeInDown");
+    
+    setTimeout(hideToast, options.delay || 2000);
+  }
+  
+  function hideToast() {
+    container.classList.remove("fadeInDown");
+    container.classList.add("fadeOutUp");
+    toast_queue.shift();
+    setTimeout(nextToast, 500);
+  }
+  
+  function nextToast() {
+    if (toast_queue.length > 0) {
+      var thisToast = toast_queue[0];
+      showToast(thisToast.msg, thisToast.options, true);
+    }
+  }
+  
+  return {
+    show: addToast,
+    getQueue: function() {return toast_queue;}
+  };
+}();

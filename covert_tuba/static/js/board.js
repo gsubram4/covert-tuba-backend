@@ -1,4 +1,5 @@
-var Board = function(boardEl, _gridsize) {
+var Board = function(_gridsize) {
+  var boardEl = document.createElement("div");
   var gridsize = _gridsize || 5;
   var boardElements;
   var rendered = false;
@@ -13,14 +14,18 @@ var Board = function(boardEl, _gridsize) {
   function init() {
     // Padding on board in %
     var boardPadding = 0.15;
-    var largest_dimension = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+    var smallest_dimension = window.innerWidth < (window.innerHeight - 150) ? window.innerWidth : (window.innerHeight - 150);
+   
+    log(smallest_dimension);
+    
     boardDimensions.cellSize = Math.floor(
-      (1 - boardPadding) * largest_dimension / gridsize
+      (1 - boardPadding) * smallest_dimension / gridsize
     );
     boardDimensions.boardSize = boardDimensions.cellSize * gridsize;
-    boardEl.style.marginLeft = (largest_dimension * boardPadding / 2 - gridsize * 5) + "px";
-    boardEl.style.width = getPixelSize(largest_dimension);
-    boardEl.style.height = getPixelSize(largest_dimension);
+    boardEl.style.marginLeft = getPixelSize( (window.innerWidth - boardDimensions.boardSize) * (1 - boardPadding) / 2 );
+    //getPixelSize( (window.innerWidth * boardPadding / 2 - gridsize * 5) );
+    boardEl.style.width = getPixelSize(smallest_dimension);
+    boardEl.style.height = getPixelSize(smallest_dimension);
   }
 
   
@@ -55,7 +60,7 @@ var Board = function(boardEl, _gridsize) {
 
   function buildCell(thisState, position, state) {
     var renderDelay = 50;
-    if (rendered && !thisState) return boardElements[position];
+    //if (rendered && !thisState) return boardElements[position];
     var cell = document.createElement("div");
     cell.style.float = "left";
     cell.style.height = getPixelSize(boardDimensions.cellSize);
@@ -88,7 +93,6 @@ var Board = function(boardEl, _gridsize) {
    * @return {DOMElement}         DOM Element representing marker
    */
   function generateMarker(player, cellSize) {
-    log("Inside generate marker", player);
     var marker = document.createElement("div");
     marker.style.left = getPixelSize(cellSize / 4);
     marker.style.top = getPixelSize(cellSize / 4);
@@ -121,6 +125,7 @@ var Board = function(boardEl, _gridsize) {
   init();
 
   return {
+    element: boardEl,
     render: render
   }
-};//(document.getElementById("board"), 3);
+};

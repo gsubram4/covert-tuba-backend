@@ -44,7 +44,7 @@ var ControlPanel = function() {
   */
 
   // Join Game
-  var join_board_button = new Button("Join Game", GameMaster.joinGame);
+  var join_board_button = new Button("Join Game", GameMaster.joinGame, {hover: "whitesmoke"});
   main_actions_row.appendChild(join_board_button);
 
   return {

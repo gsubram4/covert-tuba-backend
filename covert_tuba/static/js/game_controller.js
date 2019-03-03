@@ -1,34 +1,55 @@
 var GameMaster = function(Network) {
   
   var hasInitialized = false;
+  var game_state;
+  var player_id;
+  
+  Network.subscribeToBoardUpdate(update_board);
   
   function createGame(size) {
-    return Network.createGame(null, size);
+    return Network.createGame(null, size).then(function(d){
+      console.log(d);
+      return d.name;
+    });
   }
 
   function joinGame(id) {
-    var name = id || prompt("Game ID?");
+    var name = typeof(id)=="string" ? id : prompt("Game ID?");
     if (!name) {
       alert("Name required to join game");
       return;
     }
-    Network.joinGame(name);
+    return Network.joinGame(name).then(function(d) {
+      console.log(d);
+      return d.name;
+    });
   }
 
   function init_board(size) {
-    game_state = new GameState();
-    game_board = new Board(play_area, size);
+    game_state = new GameState({play_size:size});
+    game_board = new Board(size);
+    play_area.appendChild(game_board.element);
     game_board.render(game_state);
   }
   
   function update_board(state) {
     if (!hasInitialized) init_board(state.size[0]);
+    hasInitialized = true;
     game_board.render(state);
     // Need to contemplate how state should mutate -- full replace? Or other options
     game_state = state;
   }
   
-  Network.subscribeToBoardUpdate(update_board);
+  function GameState(options) {
+    // Player 0 == x
+    // Player 1 == o
+    return {
+      board: options.board || new Array(options.play_size*options.play_size).fill(null),
+      win_positions: [],
+      active_player: options.active || 0,
+      winner: options.winner || null
+    };
+  };
   
   function makeMove(index) {
     var thisBoard = game_state.board;

@@ -54,8 +54,8 @@ var NetworkInterface = function() {
       var emit = socket.emit('create_board', options, returnFromCreate);
       
       function returnFromCreate(data) {
-        log.bind(null, "createGame");
-        resolve(data.name);
+        log("createGame", data);
+        resolve(data);
       }
     });
     return created;
@@ -66,7 +66,6 @@ var NetworkInterface = function() {
     
     function joinedPromise(resolve, reject) {
       if (!name) {
-        alert("Name required!");
         reject("NAME_REQUIRED");
       }
       var options = {
@@ -75,7 +74,7 @@ var NetworkInterface = function() {
       var emit = socket.emit('join_board', options, returnFromJoin);
       
       function returnFromJoin(data) {
-        log.bind(null, "joinGame");
+        log("joinGame", data);
         resolve(data);
       }
     }
