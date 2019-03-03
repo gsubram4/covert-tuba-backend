@@ -52,7 +52,14 @@ var GameMaster = function(Network) {
     hasInitialized = true;
     
     // Check for win
-    if (state.winner) Notification.show("Winner winner! Congrats to " + state.winner, {delay: 5000});
+    if (state.winner) {
+      Notification.show("Winner winner! Congrats to " + state.winner, {delay: 5000});
+      if (state.winner == state.active_player) {
+        SFX.playSuccess();
+      } else {
+        SFX.playFail(); 
+      }
+    }
     
     game_board.render(state);
     // Need to contemplate how state should mutate -- full replace? Or other options
