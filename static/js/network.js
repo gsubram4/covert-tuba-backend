@@ -41,11 +41,20 @@ var NetworkInterface = function() {
   // createGame onclick - emit a message on the 'create' channel to 
   // create a new game with default parameters
   function createGame(name, size) {
-    var options = {};
-    if (name) options.name = name;
-    options.board_size = size || 3;
-    log('Creating game...', options);
-    var emit = socket.emit('create_board', options, log.bind(null, "createGame"));
+    var created = new Promise(function(resolve, reject) {
+      var options = {};
+      if (name) options.name = name;
+      options.board_size = size || 3;
+      log('Creating game...', options);
+      var emit = socket.emit('create_board', options, returnFromCreate);
+      
+      function returnFromCreate(data) {
+        log.bind(null, "createGame");
+        resolve(data.name);
+      }
+    });
+    console.log(created);
+    return created;
   }
 
   function joinGame(name) {

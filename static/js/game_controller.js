@@ -4,7 +4,7 @@ var GameMaster = function(Network) {
   
   function createGame(size) {
     init_board(size);
-    Network.createGame(null, size);
+    return Network.createGame(null, size);
   }
 
   function joinGame(id) {

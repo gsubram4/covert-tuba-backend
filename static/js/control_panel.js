@@ -14,10 +14,20 @@ var ControlPanel = function() {
   title.style.textAlign = "center";
   panel.appendChild(title);
   
+  // Share UI element
+  var share_ui = new ShareLink("");
+  
   // Create Game
-  var creation_area = document.createElement("div");
-  var create_board_button = new Button("Create Game", GameMaster.createGame.bind(null, 3), {hover: "whitesmoke"});
-  creation_area.appendChild(create_board_button);
+  var create_board_button = new Button("Create Game", createGame, {hover: "whitesmoke"});
+  panel.appendChild(create_board_button);
+  
+  function createGame() {
+    // Share buttons
+    panel.appendChild(share_ui.element);
+    GameMaster.createGame(3).then(function(name) {
+      share_ui.api.updateUrl(location.origin + "?room=" + name);
+    });
+  }
   
   // Option Buttons
   // Removing for now to focus on finishing the game
@@ -25,16 +35,14 @@ var ControlPanel = function() {
   var play_options = [3,4,5];
   var buttons = play_options.map(function(el) {return new GridButton(el)});
   buttons.forEach(function(el) {
-    creation_area.appendChild(el.element);
+  creation_area.appendChild(el.element);
   });
   */
-  
-  panel.appendChild(creation_area);
-  
+
   // Join Game
   var join_board_button = new Button("Join Game", GameMaster.joinGame);
   panel.appendChild(join_board_button);
-  
+
   return {
     element: panel
   };
@@ -43,10 +51,10 @@ var ControlPanel = function() {
 
 
 /**
- * TicTacToe grid button constructor
- * @param  {[type]} gridSize [description]
- * @return {[type]}          [description]
- */
+* TicTacToe grid button constructor
+* @param  {[type]} gridSize [description]
+* @return {[type]}          [description]
+*/
 var GridButton = function(gridSize) {
   
   var parent_container = new Button("", function(evt) {

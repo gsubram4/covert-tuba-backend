@@ -23,6 +23,29 @@ var Button = function(title, callback, options) {
   return btn;
 }
 
+var ShareLink = function(url) {
+  var container = document.createElement("div");
+  
+  var input = document.createElement("input");
+  input.value = url;
+  var copy = new Button("Copy invite", function() {
+    input.select();
+    document.execCommand("copy");
+  });
+  
+  container.appendChild(input);
+  container.appendChild(copy);
+  
+  return {
+    element: container,
+    api: {
+      updateUrl: function(url) {
+        input.value = url;
+      }
+    }
+  };
+}
+
 var Panel = function() {
   var panel = document.createElement("div");
   panel.style.backgroundColor = "white";
@@ -36,6 +59,8 @@ var TextStyle = {
   fontFamily: "Consolas,monaco,\"Ubuntu Mono\",courier,monospace",
   fontWeight: 300
 };
+
+var InputStyle = {};
 
 function applyStyle(target, style) {
   Object.assign(target.style, style);
