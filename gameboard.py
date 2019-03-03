@@ -88,7 +88,8 @@ class GameBoard:
 
 
     def __serialize__(self):
-        return dumps({"board": [GameBoard.repr_dict[k] for k in self.board.flatten().tolist()], 
+        return dumps({"board": [GameBoard.repr_dict[k] for k in self.board.flatten().tolist()],
+                      "size": self.board.shape,
                 "active_player": self.active_player, 
                 "players": self.players,
                 "winner": GameBoard.repr_dict[self.winner] })
