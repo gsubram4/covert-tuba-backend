@@ -172,5 +172,5 @@ dmypy.json
 
 ### Python Patch ###
 .venv/
-
+logs/
 # End of https://www.gitignore.io/api/osx,linux,python,jupyternotebook

@@ -2,7 +2,6 @@ from flask_socketio import SocketIO, join_room, emit
 from flask import request
 from . import controller
 from . import socketio
-from jsonschema import validate
 import logging
 logging = logging.getLogger('covert_tuba')
 
