@@ -1,4 +1,5 @@
 import logging 
+import logging.handlers
 
 LOG_FILENAME = 'logs/covert_tuba.log'
 LOG_FORMAT = '%(levelname)-10s %(asctime)s %(filename)-20s %(funcName)-25s %(lineno)-5d: %(message)s'
