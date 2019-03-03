@@ -1,21 +1,71 @@
-var domain = "http://107.22.89.117";
-var port = "5000";
+var NetworkInterface = function() {
+  
+  //TODO: Move to config file
+  var network_config = {
+    "PROD": {
+      "domain": "http://107.22.89.117",
+      "port": "8000"
+    },
+    "DEV": {
+      "domain": "http://107.22.89.117",
+      "port": "5000"
+    }
+  };
+  
+  var url_params = new URLSearchParams(window.location.search);
+  var ENV = url_params.get("ENV");
+  var current_config = ENV ? network_config[ENV] : network_config["PROD"];
+  
+  var domain = current_config.domain;
+  var port = current_config.port;
 
-var socket = io.connect(domain + ":" + port);
-console.log(socket);
-// verify our websocket connection is established
-socket.on('connect', function() {
-  console.log('Websocket connected!');
-});
-// message handler for the 'join_room' channel
-socket.on('join_room', function(msg) {
-  console.log(msg);
-});
+  var room = "silly_mallard";
 
-socket.on('update_board', updateBoard);
-// createGame onclick - emit a message on the 'create' channel to 
-// create a new game with default parameters
-function createGame() {
-  console.log('Creating game...');
-  socket.emit('create', {size: 'normal', teams: 2, dictionary: 'Simple'});
-}
+  var log = console.log.bind(this, "%cnetwork.js", "font-weight:bold;color:#006eff;");
+
+  var socket = io.connect(domain + ":" + port);
+  log(socket);
+  // verify our websocket connection is established
+  socket.on('connect', function() {
+    log('Websocket connected!');
+  });
+  // message handler for the 'join_room' channel
+  socket.on('join_board', function(msg) {
+    log(msg);
+  });
+
+  socket.on('board_update', function(input) {
+    log("board_update", input);
+    updateBoard(input);
+  });
+  // createGame onclick - emit a message on the 'create' channel to 
+  // create a new game with default parameters
+  function createGame(name, size) {
+    var options = {};
+    if (name) options.name = name;
+    options.board_size = size || 3;
+    log('Creating game...', options);
+    var emit = socket.emit('create_board', options, log.bind(null, "createGame"));
+  }
+
+  function joinGame(name) {
+    if (!name) {
+      alert("Name required!");
+      return;
+    }
+    var options = {
+      name: name
+    };
+    var emit = socket.emit('join_board', options, log.bind(null, "joinGame"));
+  }
+
+
+  function playMove(idx) {
+    var emit = socket.emit('play_move', idx, log.bind(null, "playMove"));
+  }
+  return {
+    playMove: playMove,
+    createGame: createGame,
+    joinGame: joinGame
+  };
+};

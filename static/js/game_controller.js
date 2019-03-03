@@ -1,25 +1,58 @@
-var mid_game = new GameState(
-  [null, "x", "o", null, "x", null, null, null, null],
-  1
-);
+var GameMaster = function(Network) {
+  
+  var SELF = this;
+  
+  function createGame(size) {
+    init_board(size);
+    Network.createGame(null, size);
+  }
 
-function generateRandomBoard() {
-  var board = new Array(play_size*play_size).fill(null).map(function() {
-    var rand = Math.random();
-    if (rand>.8) return "x";
-    if (rand<.5) return "o";
-    return null;
-  });
-  var player = Math.random() > 0.5 ? 0 : 1;
-  return new GameState(board, player);
-}
+  function joinGame(id) {
+    var name = id || prompt("Game ID?");
+    if (!name) {
+      alert("Name required to join game");
+      return;
+    }
+    Network.joinGame(name);
+    init_board();
+  }
 
-function applyMidGame() {
-  game_board.render(mid_game);
-}
-
-function applyRandomGame() {
-  var random_board = generateRandomBoard();
-  console.log(random_board);
-  game_board.render(random_board);
-}
+  function init_board(size) {
+    game_state = new GameState();
+    game_board = new Board(play_area, size, SELF);
+    game_board.render(game_state);
+  }
+  
+  function update_board(state) {
+    state = JSON.parse(state);
+    game_board.render(state);
+    // Need to contemplate how state should mutate -- full replace? Or other options
+    game_state = state;
+  }
+  
+  function makeMove(index) {
+    var thisBoard = game_state.board;
+    
+    // Should pass to server & bring back with updateBoard
+    // How much local validation should also occur?
+    var player_token = game_state.active_player==0 ? "x" : "o";
+    
+    // Validate proper move
+    if (thisBoard[index]) {
+      shakeBoard();
+      return;
+    }
+    
+    // Make move & swap player turn
+    thisBoard[index] = player_token;
+    //game_state.active_player = game_state.active_player == 0 ? 1 : 0;
+    //game_board.render(game_state);
+    Network.playMove(index);
+  }
+  
+  return {
+    createGame: createGame,
+    joinGame: joinGame,
+    makeMove: makeMove
+  };
+}(new NetworkInterface());

@@ -1,0 +1,10 @@
+
+/* COLORS */
+element {
+  --main-color: #55a147;
+}
+
+/* BUTTONS */
+.button {
+  background-color: var(--main-color);
+}
