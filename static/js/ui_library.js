@@ -23,10 +23,22 @@ var Button = function(title, callback, options) {
   return btn;
 }
 
+var Input = function() {
+  var input = document.createElement("input");
+  applyStyle(input, TextStyle);
+  applyStyle(input, InputStyle);
+  
+  return {
+    element: input
+  }
+}
+
 var ShareLink = function(url) {
   var container = document.createElement("div");
   
-  var input = document.createElement("input");
+  applyStyle(container, CenterContents);
+  
+  var input = (new Input()).element;
   input.value = url;
   var copy = new Button("Copy invite", function() {
     input.select();
@@ -60,7 +72,22 @@ var TextStyle = {
   fontWeight: 300
 };
 
-var InputStyle = {};
+var InputStyle = {
+  border: "0",
+  margin: "10px",
+  width: "90%",
+  background: "whitesmoke",
+  padding: "10px",
+  borderRadius: "100px",
+  textAlign: "center",
+  outline: "none"
+};
+
+var CenterContents = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
+};
 
 function applyStyle(target, style) {
   Object.assign(target.style, style);

@@ -25,19 +25,24 @@ var NetworkInterface = function() {
 
   var socket = io.connect(domain + ":" + port);
   log(socket);
+  
   // verify our websocket connection is established
   socket.on('connect', function() {
     log('Websocket connected!');
   });
-  // message handler for the 'join_room' channel
-  socket.on('join_board', function(msg) {
-    log(msg);
-  });
 
+
+  // Handle board updates
+  var board_listeners = [];
   socket.on('board_update', function(input) {
     log("board_update", input);
-    updateBoard(input);
+    board_listeners.forEach(function(listener) {
+      listener(JSON.parse(input));
+    })
+    //updateBoard(input);
   });
+  
+  
   // createGame onclick - emit a message on the 'create' channel to 
   // create a new game with default parameters
   function createGame(name, size) {
@@ -53,19 +58,29 @@ var NetworkInterface = function() {
         resolve(data.name);
       }
     });
-    console.log(created);
     return created;
   }
 
   function joinGame(name) {
-    if (!name) {
-      alert("Name required!");
-      return;
+    var joined = new Promise(joinedPromise);
+    
+    function joinedPromise(resolve, reject) {
+      if (!name) {
+        alert("Name required!");
+        reject("NAME_REQUIRED");
+      }
+      var options = {
+        name: name
+      };
+      var emit = socket.emit('join_board', options, returnFromJoin);
+      
+      function returnFromJoin(data) {
+        log.bind(null, "joinGame");
+        resolve(data);
+      }
     }
-    var options = {
-      name: name
-    };
-    var emit = socket.emit('join_board', options, log.bind(null, "joinGame"));
+    
+    return joined;
   }
 
 
@@ -75,6 +90,9 @@ var NetworkInterface = function() {
   return {
     playMove: playMove,
     createGame: createGame,
-    joinGame: joinGame
+    joinGame: joinGame,
+    subscribeToBoardUpdate: function(callback) {
+      board_listeners.push(callback);
+    }
   };
 };

@@ -41,7 +41,7 @@ var Board = function(boardEl, _gridsize) {
       boardEl.append(cell);
     });
     var label = document.createElement("h4");
-    label.innerText = "Current Player: " + state.active_player;
+    //label.innerText = "Current Player: " + state.active_player;
     boardEl.appendChild(label);
     boardElements = domBoard;
     rendered = true;

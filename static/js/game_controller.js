@@ -1,9 +1,8 @@
 var GameMaster = function(Network) {
   
-  var SELF = this;
+  var hasInitialized = false;
   
   function createGame(size) {
-    init_board(size);
     return Network.createGame(null, size);
   }
 
@@ -14,21 +13,22 @@ var GameMaster = function(Network) {
       return;
     }
     Network.joinGame(name);
-    init_board();
   }
 
   function init_board(size) {
     game_state = new GameState();
-    game_board = new Board(play_area, size, SELF);
+    game_board = new Board(play_area, size);
     game_board.render(game_state);
   }
   
   function update_board(state) {
-    state = JSON.parse(state);
+    if (!hasInitialized) init_board(state.size[0]);
     game_board.render(state);
     // Need to contemplate how state should mutate -- full replace? Or other options
     game_state = state;
   }
+  
+  Network.subscribeToBoardUpdate(update_board);
   
   function makeMove(index) {
     var thisBoard = game_state.board;

@@ -17,15 +17,19 @@ var ControlPanel = function() {
   // Share UI element
   var share_ui = new ShareLink("");
   
+  var main_actions_row = document.createElement("div");
+  applyStyle(main_actions_row, CenterContents);
+  panel.appendChild(main_actions_row);
+  
   // Create Game
   var create_board_button = new Button("Create Game", createGame, {hover: "whitesmoke"});
-  panel.appendChild(create_board_button);
+  main_actions_row.appendChild(create_board_button);
   
   function createGame() {
     // Share buttons
     panel.appendChild(share_ui.element);
     GameMaster.createGame(3).then(function(name) {
-      share_ui.api.updateUrl(location.origin + "?room=" + name);
+      share_ui.api.updateUrl(location.href + "?room=" + name);
     });
   }
   
@@ -41,7 +45,7 @@ var ControlPanel = function() {
 
   // Join Game
   var join_board_button = new Button("Join Game", GameMaster.joinGame);
-  panel.appendChild(join_board_button);
+  main_actions_row.appendChild(join_board_button);
 
   return {
     element: panel
