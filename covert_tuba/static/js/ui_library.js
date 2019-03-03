@@ -67,31 +67,43 @@ var Panel = function() {
   //panel.styl
 }
 
-var CardStyle = {
-  backgroundColor: "white",
-  boxShadow: "0 1px 4px rgba(0,0,0,.15)"
-};
 
 var TextStyle = {
   fontFamily: "Consolas,monaco,\"Ubuntu Mono\",courier,monospace",
-  fontWeight: 300
-};
-
-var InputStyle = {
-  border: "0",
-  margin: "10px",
-  width: "90%",
-  background: "whitesmoke",
-  padding: "10px",
-  borderRadius: "100px",
-  textAlign: "center",
-  outline: "none"
+  fontWeight: 300,
+  textAlign: "center"
 };
 
 var CenterContents = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center"
+};
+
+var ColorDictionary = {
+  success: "#2ecc71",
+  secondary: "#3498db",
+  failure: "#e74c3c",
+  warning: "#e67e22",
+  bland: "#ecf0f1",
+  blandpop: "#34495e"
+};
+
+var CardStyle = {
+  backgroundColor: ColorDictionary.bland,
+  boxShadow: "0 1px 4px rgba(0,0,0,.15)",
+  padding: "10px"
+};
+var InputStyle = {
+  border: "0",
+  margin: "10px",
+  width: "90%",
+  background: ColorDictionary.blandpop,
+  color: ColorDictionary.bland,
+  padding: "10px",
+  borderRadius: "100px",
+  textAlign: "center",
+  outline: "none"
 };
 
 function applyStyle(target, style) {
@@ -114,7 +126,7 @@ var Notification = function() {
     padding: "10px",
     top: 0,
     right: 0, 
-    backgroundColor: "#55a147",
+    backgroundColor: ColorDictionary.success,
     color: "white"
   });
   
@@ -160,4 +172,29 @@ var Notification = function() {
     show: addToast,
     getQueue: function() {return toast_queue;}
   };
+}();
+
+
+// Sound Library
+var SFX = function() {
+  
+  
+  function playBlip() {
+    var blip = new Audio('../res/blip.m4a');
+    blip.play();
+  }
+  function playSuccess() {
+    var success = new Audio('../res/success.m4a');
+    success.play();
+  }
+  function playFail() {
+    var fail = new Audio('../res/fail.m4a');
+    fail.play();
+  }
+  
+  return {
+    playBlip: playBlip,
+    playFail: playFail,
+    playSuccess: playSuccess,
+  }
 }();

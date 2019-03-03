@@ -8,19 +8,34 @@ var GameMaster = function(Network) {
   
   function createGame(size) {
     return Network.createGame(null, size).then(function(d){
-      console.log(d);
+      setPlayer(d.role);
+      SFX.playSuccess(); 
       return d.name;
     });
+  }
+  
+  function setPlayer(role) {
+      player_id = role;
+      game_board.setPlayer(role);
+  }
+  
+  function restartGame() {
+    return Network.restartGame().then(function(d) {
+      SFX.playSuccess();
+      return d;
+    })
   }
 
   function joinGame(id) {
     var name = typeof(id)=="string" ? id : prompt("Game ID?");
     if (!name) {
-      alert("Name required to join game");
+      Notification.show("Name required to join game");
+      SFX.playFail();
       return;
     }
     return Network.joinGame(name).then(function(d) {
-      console.log(d);
+      SFX.playSuccess();
+      setPlayer(d.role);
       return d.name;
     });
   }
@@ -35,6 +50,10 @@ var GameMaster = function(Network) {
   function update_board(state) {
     if (!hasInitialized) init_board(state.size[0]);
     hasInitialized = true;
+    
+    // Check for win
+    if (state.winner) Notification.show("Winner winner! Congrats to " + state.winner, {delay: 5000});
+    
     game_board.render(state);
     // Need to contemplate how state should mutate -- full replace? Or other options
     game_state = state;
@@ -54,6 +73,7 @@ var GameMaster = function(Network) {
   function makeMove(index) {
     var thisBoard = game_state.board;
     
+    SFX.playBlip(); 
     // Should pass to server & bring back with updateBoard
     // How much local validation should also occur?
     var player_token = game_state.active_player==0 ? "x" : "o";
@@ -74,6 +94,10 @@ var GameMaster = function(Network) {
   return {
     createGame: createGame,
     joinGame: joinGame,
-    makeMove: makeMove
+    restartGame: restartGame,
+    makeMove: makeMove,
+    getPlayerId: function() {
+      return player_id;
+    }
   };
 }(new NetworkInterface());

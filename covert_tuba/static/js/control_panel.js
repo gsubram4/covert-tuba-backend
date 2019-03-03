@@ -22,7 +22,7 @@ var ControlPanel = function() {
   panel.appendChild(main_actions_row);
   
   // Create Game
-  var create_board_button = new Button("Create Game", createGame, {hover: "whitesmoke"});
+  var create_board_button = new Button("Create Game", createGame, {hover: ColorDictionary.success});
   main_actions_row.appendChild(create_board_button);
   
   function createGame() {
@@ -44,8 +44,13 @@ var ControlPanel = function() {
   */
 
   // Join Game
-  var join_board_button = new Button("Join Game", GameMaster.joinGame, {hover: "whitesmoke"});
+  var join_board_button = new Button("Join Game", GameMaster.joinGame, {hover: ColorDictionary.secondary});
   main_actions_row.appendChild(join_board_button);
+  
+  
+  // Restart Game
+  var restart_game_button = new Button("Restart Game", GameMaster.restartGame, {hover: ColorDictionary.warning});
+  main_actions_row.appendChild(restart_game_button);
 
   return {
     element: panel

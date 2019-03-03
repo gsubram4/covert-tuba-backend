@@ -63,6 +63,7 @@ function makeMove(index) {
 function shakeBoard() {
   play_area.classList.remove("fadeIn");
   play_area.classList.remove("shake");
+  SFX.playFail();
   setTimeout(function(){
     play_area.classList.add("shake");
   }, 50);

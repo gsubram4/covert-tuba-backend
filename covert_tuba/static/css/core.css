@@ -8,3 +8,7 @@ element {
 .button {
   background-color: var(--main-color);
 }
+
+body {
+  overflow:hidden;
+}

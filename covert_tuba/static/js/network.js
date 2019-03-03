@@ -60,6 +60,22 @@ var NetworkInterface = function() {
     });
     return created;
   }
+  
+  function restartGame() {
+    var restarted = new Promise(function(resolve, reject) {
+      
+      log('Restarting game');
+      
+      var emit = socket.emit('restart_board', null, returnFromRestart);
+      
+      function returnFromRestart(data) {
+        log("restartGame", data);
+        resolve(data);
+      }
+    });
+    
+    return restarted;
+  }
 
   function joinGame(name) {
     var joined = new Promise(joinedPromise);
@@ -89,6 +105,7 @@ var NetworkInterface = function() {
   return {
     playMove: playMove,
     createGame: createGame,
+    restartGame: restartGame,
     joinGame: joinGame,
     subscribeToBoardUpdate: function(callback) {
       board_listeners.push(callback);

@@ -1,5 +1,13 @@
 var Board = function(_gridsize) {
+  var boardContainer = document.createElement("div");
+  
+  // Player details
+  var playerContainer = document.createElement("div");
+  applyStyle(playerContainer, TextStyle);
+  boardContainer.appendChild(playerContainer);
+  
   var boardEl = document.createElement("div");
+  boardContainer.appendChild(boardEl);
   var gridsize = _gridsize || 5;
   var boardElements;
   var rendered = false;
@@ -7,6 +15,7 @@ var Board = function(_gridsize) {
     boardSize: 0,
     cellSize: 0
   };
+  
 
   var log = console.log.bind(this, "%cboard.js", "font-weight:bold;color:#55a147;");
 
@@ -14,7 +23,7 @@ var Board = function(_gridsize) {
   function init() {
     // Padding on board in %
     var boardPadding = 0.15;
-    var smallest_dimension = window.innerWidth < (window.innerHeight - 150) ? window.innerWidth : (window.innerHeight - 150);
+    var smallest_dimension = window.innerWidth < (window.innerHeight - 175) ? window.innerWidth : (window.innerHeight - 175);
    
     log(smallest_dimension);
     
@@ -120,11 +129,16 @@ var Board = function(_gridsize) {
   function getPixelSize(pixels) {
     return pixels + "px";
   }
+  
+  function setPlayer(player) {
+    playerContainer.innerText = "Player:" + player;
+  }
 
   init();
 
   return {
-    element: boardEl,
-    render: render
+    element: boardContainer,
+    render: render,
+    setPlayer: setPlayer
   }
 };
