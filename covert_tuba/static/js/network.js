@@ -31,6 +31,13 @@ var NetworkInterface = function() {
     log('Websocket connected!');
   });
 
+  var role_listeners = [];
+  socket.on('role_change', function(input) {
+    log("role_change", input);
+    role_listeners.forEach(function(listener) {
+      listener(JSON.parse(input));
+    });
+  });
 
   // Handle board updates
   var board_listeners = [];
@@ -109,6 +116,9 @@ var NetworkInterface = function() {
     joinGame: joinGame,
     subscribeToBoardUpdate: function(callback) {
       board_listeners.push(callback);
+    },
+    subscribeToRoleUpdate: function(callback) {
+      role_listeners.push(callback);
     }
   };
 };

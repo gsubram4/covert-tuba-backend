@@ -150,6 +150,9 @@ var Notification = function() {
     container.innerText = msg;
     container.classList.remove("fadeOutUp");
     container.classList.add("fadeInDown");
+    if (options.theme) {
+      container.style.backgroundColor = ColorDictionary[options.theme];
+    }
     
     setTimeout(hideToast, options.delay || 2000);
   }
@@ -177,7 +180,6 @@ var Notification = function() {
 
 // Sound Library
 var SFX = function() {
-  
   
   function playBlip() {
     var blip = new Audio('../res/blip.m4a');

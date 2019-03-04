@@ -5,6 +5,7 @@ var GameMaster = function(Network) {
   var player_id;
   
   Network.subscribeToBoardUpdate(update_board);
+  Network.subscribeToRoleUpdate(update_role);
   
   function createGame(size) {
     return Network.createGame(null, size).then(function(d){
@@ -45,6 +46,10 @@ var GameMaster = function(Network) {
     game_board = new Board(size);
     play_area.appendChild(game_board.element);
     game_board.render(game_state);
+  }
+  
+  function update_role(d) {
+    setPlayer(d.role);
   }
   
   function update_board(state) {
