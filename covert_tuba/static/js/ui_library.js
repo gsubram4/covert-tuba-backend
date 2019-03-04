@@ -142,6 +142,15 @@ var Notification = function() {
     showToast(msg, options);
   }
   
+  /**
+   * Displays toaster message on UI
+   * @param  {string} msg     Notification message
+   * @param  {object} options {
+   *                            theme: success, secondary, failure, warning, bland, blandpop,
+   *                            duration: ms for message duration
+   *                          }
+   * @return {void}         
+   */
   function showToast(msg, options) {
     
     if (!hasInitialized) document.body.appendChild(container);
@@ -154,7 +163,7 @@ var Notification = function() {
       container.style.backgroundColor = ColorDictionary[options.theme];
     }
     
-    setTimeout(hideToast, options.delay || 2000);
+    setTimeout(hideToast, options.duration || 2000);
   }
   
   function hideToast() {

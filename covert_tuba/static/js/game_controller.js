@@ -6,6 +6,11 @@ var GameMaster = function(Network) {
   
   Network.subscribeToBoardUpdate(update_board);
   Network.subscribeToRoleUpdate(update_role);
+  Network.subscribeToNotify(send_notification);
+  
+  function send_notification(msg_object) {
+    Notification.show(msg_object.message, msg_object);
+  }
   
   function createGame(size) {
     return Network.createGame(null, size).then(function(d){
@@ -58,7 +63,7 @@ var GameMaster = function(Network) {
     
     // Check for win
     if (state.winner) {
-      Notification.show("Winner winner! Congrats to " + state.winner, {delay: 5000});
+      Notification.show("Winner winner! Congrats to " + state.winner, {duration: 5000});
       if (state.winner == state.active_player) {
         SFX.playSuccess();
       } else {

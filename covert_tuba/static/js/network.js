@@ -30,6 +30,14 @@ var NetworkInterface = function() {
   socket.on('connect', function() {
     log('Websocket connected!');
   });
+  
+  var msg_listeners = [];
+  socket.on('send_notification', function(input) {
+    log("send_notification", input);
+    msg_listeners.forEach(function(listener){
+      listener(input);
+    });
+  });
 
   var role_listeners = [];
   socket.on('role_change', function(input) {
@@ -119,6 +127,9 @@ var NetworkInterface = function() {
     },
     subscribeToRoleUpdate: function(callback) {
       role_listeners.push(callback);
+    },
+    subscribeToNotify: function(callback) {
+      msg_listeners.push(callback);
     }
   };
 };
