@@ -67,7 +67,22 @@ def join_board(json):
         join_room(json['name'])
         emit_board(json['name'])
     return response
-    
+
+@socketio.on('restart_board')
+def restart_board(json):
+    response = controller.player_to_room(request.sid)
+    if response['code'] == 200:
+        room_name = response['value']
+        room_response = controller.restart_room(room_name)
+        if room_response['code'] == 200:
+            players = room_response['value']
+            for player,role in players.items():
+                response['role'] = role 
+                logging.info("Sending role change for player {} in room {} role {}".format(player, room_name, role))
+                emit('role_change', response, room=player)
+        
+        emit_board(room_name)
+    return response
 
 @socketio.on('create_board')
 def create_board(json):

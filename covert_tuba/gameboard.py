@@ -17,6 +17,7 @@ class GameBoard:
         
         self.player_one = None
         self.player_two = None
+        self.win_positions = []
         self.players = {}
         
     def get_name(self):
@@ -24,6 +25,22 @@ class GameBoard:
         
     def get_players(self):
         return list(self.players.keys())
+    
+    def restart_board(self):
+        self.active_player = GameBoard.player_one
+        self.winner = 0
+        self.board = np.zeros((self.board_size, self.board_size)).astype(int)
+        
+        old_p1 = self.player_one
+        old_p2 = self.player_two
+        self.player_one = old_p2
+        self.player_two = old_p1
+        self.win_positions = []
+        if self.player_one in self.players:
+            self.players[self.player_one] = GameBoard.player_one
+        if self.player_two in self.players:
+            self.players[self.player_two] = GameBoard.player_two
+        return {player:GameBoard.repr_dict[role] for player, role in self.players.items()}
         
     def register_player(self, player_name, spectator=False):
         if player_name in self.players:
@@ -43,7 +60,7 @@ class GameBoard:
             role = GameBoard.player_spectator
                 
         self.players[player_name] = role
-        return role
+        return GameBoard.repr_dict[role]
     
     def unregister_player(self, player_name):
         if player_name in self.players:
@@ -83,22 +100,25 @@ class GameBoard:
         
     def check_win_conditions(self, location, token):
         row, column = location
-        
         #check horizontally
         if np.abs(np.sum(self.board[row, :])) == 3:
             self.winner = token
+            self.win_positions = [int(np.ravel_multi_index([row, idx], self.board.shape)) for idx in range(self.board.shape[1])]
         
         #check vertically
         if np.abs(np.sum(self.board[:, column])) == 3:
             self.winner=token
+            self.win_positions = [int(np.ravel_multi_index([idx, column], self.board.shape)) for idx in range(self.board.shape[0])]
         
         #check main diagonally
         if row==column and self.board[0,0] == self.board[1,1] == self.board[2,2]:
             self.winner=token
+            self.win_positions = [0, 4, 8]
         
         #check second diagonal
         if row+column == 2 and self.board[0,2] == self.board[1,1] == self.board[2,0]:
             self.winner=token
+            self.win_positions = [2, 4, 6]
         
         return False if self.winner==0 else True
 
@@ -106,7 +126,8 @@ class GameBoard:
     def __serialize__(self):
         return dumps({"board": [GameBoard.repr_dict[k] for k in self.board.flatten().tolist()],
                       "size": self.board.shape,
-                "active_player": self.active_player, 
+                "active_player": GameBoard.repr_dict[self.active_player], 
                 "players": self.players,
+                "win_positions": self.win_positions,
                 "winner": GameBoard.repr_dict[self.winner] })
         

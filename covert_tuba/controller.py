@@ -89,6 +89,17 @@ def unregister_player(player_name, room=None):
             total_players = room.unregister_player(player_name)
             if total_players == 0:
                 delete_room(room.get_name(), room)
+                
+def restart_room(room_name):
+    response = get_room(room_name)
+    if response['code'] == 200:
+        room = response['value']
+        logging.info("Restarting room {}".format(room_name))
+        players = room.restart_board()
+        return ret_helper(players)
+    else:
+        logging.info("Cannot restart room {}, does not exist".format(room_name))
+        return ret_helper(code=400)
         
 def delete_room(room_name, room=None):
     if room is None:
