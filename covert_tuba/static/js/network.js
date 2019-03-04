@@ -35,7 +35,7 @@ var NetworkInterface = function() {
   socket.on('role_change', function(input) {
     log("role_change", input);
     role_listeners.forEach(function(listener) {
-      listener(JSON.parse(input));
+      listener(input);
     });
   });
 
