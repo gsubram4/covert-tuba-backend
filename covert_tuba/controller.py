@@ -86,9 +86,13 @@ def unregister_player(player_name, room=None):
         
         if room is not None:
             logging.info("Unregistering {} from {}".format(player_name, room.get_name()))
-            total_players = room.unregister_player(player_name)
-            if total_players == 0:
+            role = room.unregister_player(player_name)
+            logging.info("Unregistered {} from room {} in role {}".format(player_name, room.get_name(), role))
+            if len(room.get_players()) == 0:
                 delete_room(room.get_name(), room)
+            return ret_helper(room_name=room_name, role=role)
+            
+    return ret_helper(code=400)
                 
 def restart_room(room_name):
     response = get_room(room_name)

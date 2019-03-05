@@ -5,8 +5,8 @@ from json import dumps
 class GameBoard:
     player_one = 1
     player_two = -1
-    player_spectator = 0
-    repr_dict = {0: "", player_one: "x", player_two: "o" }
+    player_spectator = 10
+    repr_dict = {0: "", player_one: "x", player_two: "o" , 10: "Spectator"}
     
     def __init__(self, name, board_size):
         self.name = name
@@ -64,12 +64,14 @@ class GameBoard:
     
     def unregister_player(self, player_name):
         if player_name in self.players:
+            role = self.players[player_name]
             if player_name == self.player_one:
                 self.player_one = None
             if player_name == self.player_two:
                 self.player_two = None
             del self.players[player_name]
-        return len(self.players)
+            return GameBoard.repr_dict[role]
+        return None
         
     def flip_active_player(self):
         if self.active_player == GameBoard.player_one:

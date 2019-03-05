@@ -52,8 +52,9 @@ def test_connect():
 @socketio.on('disconnect')
 def test_disconnect():
     logging.debug("User {} Disconnected".format(request.sid))
-    controller.unregister_player(request.sid)
-    
+    response = controller.unregister_player(request.sid)
+    if response['code'] == 200:
+        broadcast_message("{} has disconnected".format(response['role']), response['room_name'], theme='failure')
             
 @socketio.on('join_board')
 def join_board(json):
@@ -65,6 +66,7 @@ def join_board(json):
     response = controller.register_player(json['name'], request.sid)
     if response['code'] == 200:
         join_room(json['name'])
+        broadcast_message("New player has joined as {}".format(response['role']), json['name'])
         emit_board(json['name'])
     return response
 
@@ -116,3 +118,7 @@ def emit_board(room_name):
         board = response['value'].__serialize__()
         logging.debug("Firing Board Update For Room {room}".format(room=room_name))
         emit('board_update', board, broadcast=True, room=room_name, include_self=True)
+
+def broadcast_message(msg, room_name, theme="success", duration=2000):
+    payload = {"message": msg, "theme": theme, duration: duration, "code": 200}
+    emit('send_notification', payload, broadcast=True, room=room_name, include_self=True)
