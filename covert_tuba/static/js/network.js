@@ -106,7 +106,9 @@ var NetworkInterface = function() {
       
       function returnFromJoin(data) {
         log("joinGame", data);
-        resolve(data);
+        if (data.code == 200) resolve(data);
+        if (data.code == 400) reject(data.message || "UNKNOWN_ERROR");
+        reject("UNKNOWN_ERROR");
       }
     }
     

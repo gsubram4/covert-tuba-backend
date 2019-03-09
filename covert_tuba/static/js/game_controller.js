@@ -43,6 +43,10 @@ var GameMaster = function(Network) {
       SFX.playSuccess();
       setPlayer(d.role);
       return d.name;
+    }).catch(function(err) {
+      Notification.show("Unable to join room with id " + name, {
+        theme: "failure"
+      });
     });
   }
 
