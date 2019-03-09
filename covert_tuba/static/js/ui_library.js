@@ -5,6 +5,7 @@ var Button = function(title, callback, options) {
   btn.style.borderRadius = ".25rem";
   btn.style.outline = "none";
   btn.style.margin = "0 5px";
+  btn.style.cursor = "pointer";
   btn.onclick = callback;
   btn.innerText = title;
   applyStyle(btn, TextStyle);
@@ -45,7 +46,7 @@ var ShareLink = function(url) {
     document.execCommand("copy");
     window.getSelection().removeAllRanges();
     Notification.show("Copied! Send that link to a friend to get started!");
-  });
+  }, {hover: ColorDictionary.success});
   
   container.appendChild(input);
   container.appendChild(copy);
@@ -190,16 +191,18 @@ var Notification = function() {
 // Sound Library
 var SFX = function() {
   
+  var blip = new Audio('../res/blip.m4a');
   function playBlip() {
-    var blip = new Audio('../res/blip.m4a');
     blip.play();
   }
+  
+  var success = new Audio('../res/success.m4a');
   function playSuccess() {
-    var success = new Audio('../res/success.m4a');
     success.play();
   }
+  
+  var fail = new Audio('../res/fail.m4a');
   function playFail() {
-    var fail = new Audio('../res/fail.m4a');
     fail.play();
   }
   

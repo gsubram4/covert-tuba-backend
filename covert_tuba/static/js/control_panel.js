@@ -9,7 +9,7 @@ var ControlPanel = function() {
   
   // Title
   var title = document.createElement("h2");
-  title.innerText = "COVERT TUBA";
+  title.innerText = "TIC TAC TOE";
   applyStyle(title, TextStyle);
   title.style.textAlign = "center";
   panel.appendChild(title);
