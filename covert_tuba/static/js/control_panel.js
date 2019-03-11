@@ -28,7 +28,7 @@ var ControlPanel = function() {
   function createGame() {
     // Share buttons
     panel.appendChild(share_ui.element);
-    GameMaster.createGame(16).then(function(name) {
+    GameMaster.createGame(3).then(function(name) {
       share_ui.api.updateUrl(location.href + "?room=" + name);
     });
   }
