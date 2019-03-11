@@ -3,11 +3,11 @@ var NetworkInterface = function() {
   //TODO: Move to config file
   var network_config = {
     "PROD": {
-      "domain": "/",
+      "domain": "http://3.88.102.135",
       "port": "8000"
     },
     "DEV": {
-      "domain": "/",
+      "domain": "http://3.88.102.135",
       "port": "5000"
     }
   };
@@ -23,7 +23,8 @@ var NetworkInterface = function() {
 
   var log = console.log.bind(this, "%cnetwork.js", "font-weight:bold;color:#006eff;");
 
-  var socket = io.connect(domain + ":" + port);
+  //var socket = io.connect(domain + ":" + port);
+  var socket = io.connect(domain);
   log(socket);
   
   // verify our websocket connection is established
